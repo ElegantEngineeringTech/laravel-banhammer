@@ -62,7 +62,9 @@ trait Bannable
             $userId = $user;
         }
 
-        $ban = new Ban([
+        $model = static::getModelBan();
+
+        $ban = new $model([
             'level' => $level,
             'reason' => $reason,
             'started_at' => $from ?? now(),
