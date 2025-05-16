@@ -2,7 +2,7 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    level: 5
+    level: 9
     paths:
         - src
         - config
@@ -10,3 +10,7 @@ parameters:
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    checkModelAppends: false
+    noEnvCallsOutsideOfConfig: false
+    ignoreErrors:
+        - '#Trait Elegantly\\Banhammer\\Models\\Concerns\\Bannable is used zero times and is not analysed.#'

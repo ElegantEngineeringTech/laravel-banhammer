@@ -1,37 +1,59 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+declare(strict_types=1);
 
+namespace Elegantly\Banhammer\Tests;
+
+use Elegantly\Banhammer\BanhammerServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Orchestra\Testbench\Attributes\WithMigration;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
+use Workbench\App\Models\User;
+use Workbench\Database\Factories\UserFactory;
 
+use function Orchestra\Testbench\artisan;
+
+#[WithMigration]
 class TestCase extends Orchestra
 {
+    use WithWorkbench;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => match ($modelName) {
+                User::class => UserFactory::class,
+                default => 'Elegantly\\Banhammer\\Database\\Factories\\'.class_basename($modelName).'Factory',
+            }
         );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            SkeletonServiceProvider::class,
+            BanhammerServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    protected function defineEnvironment($app)
     {
-        config()->set('database.default', 'testing');
+        $app['config']->set('database.default', 'testing');
 
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+        $app['config']->set('banhammer.model_user', User::class);
+        $app['config']->set('banhammer.bannables', [User::class]);
+    }
+
+    protected function defineDatabaseMigrations()
+    {
+        artisan($this, 'vendor:publish', ['--tag' => 'banhammer-migrations']);
+
+        artisan($this, 'migrate');
+
+        $this->beforeApplicationDestroyed(
+            fn () => artisan($this, 'migrate:rollback')
+        );
     }
 }
