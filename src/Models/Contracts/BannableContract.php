@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User;
 
 /**
  * @template TBan of Ban
- * 
+ *
  * @property Collection<int, TBan> $bans
  * @property ?int $ban_level
  */
