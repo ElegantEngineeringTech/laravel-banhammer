@@ -1,8 +1,10 @@
 # This is my package laravel-banhammer
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/elegantly/laravel-banhammer.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-banhammer)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/elegantly/laravel-banhammer/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/elegantly/laravel-banhammer/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/elegantly/laravel-banhammer/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/elegantly/laravel-banhammer/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Tests](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Code Style](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![PHPStan Level](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/phpstan.yml?label=phpstan&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3Aphpstan)
+[![Laravel Pint](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/pint.yml?label=laravel%20pint&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3Apint)
 [![Total Downloads](https://img.shields.io/packagist/dt/elegantly/laravel-banhammer.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-banhammer)
 
 A simple package to ban an model (users, teams...).
