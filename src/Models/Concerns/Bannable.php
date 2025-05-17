@@ -77,10 +77,8 @@ trait Bannable
 
         $this->bans->push($ban);
 
-        if ($ban->isActive()) {
-            $this->ban_level = $ban->level;
-            $this->save();
-        }
+        $this->ban_level = $ban->isActive();
+        $this->save();
 
         return $ban;
     }
