@@ -37,7 +37,7 @@ interface BannableContract
         ?array $metadata = null
     ): Ban;
 
-    public function isBanned(): bool;
+    public function isBanned(?int $level = null): bool;
 
-    public function isNotBanned(): bool;
+    public function isNotBanned(?int $level = null): bool;
 }

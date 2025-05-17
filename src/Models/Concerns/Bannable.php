@@ -77,7 +77,7 @@ trait Bannable
 
         $this->bans->push($ban);
 
-        $this->ban_level = $ban->isActive();
+        $this->ban_level = $ban->isActive() ? $ban->level : null;
         $this->save();
 
         return $ban;
@@ -96,23 +96,35 @@ trait Bannable
         return $this;
     }
 
-    public function isBanned(): bool
+    public function isBanned(?int $level = null): bool
     {
+        if ($level) {
+            return $this->ban_level === $level;
+        }
+
         return $this->ban_level !== null;
     }
 
-    public function isNotBanned(): bool
+    public function isNotBanned(?int $level = null): bool
     {
-        return ! $this->isBanned();
+        return ! $this->isBanned($level);
     }
 
-    public function scopeBanned(Builder $query): Builder
+    public function scopeBanned(Builder $query, ?int $level = null): Builder
     {
+        if ($level) {
+            return $query->where('ban_level', '=', $level);
+        }
+
         return $query->where('ban_level', '!=', null);
     }
 
-    public function scopeNotBanned(Builder $query): Builder
+    public function scopeNotBanned(Builder $query, ?int $level = null): Builder
     {
+        if ($level) {
+            return $query->where('ban_level', '!=', $level);
+        }
+
         return $query->where('ban_level', '=', null);
     }
 }
