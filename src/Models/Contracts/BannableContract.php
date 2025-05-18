@@ -9,6 +9,7 @@ use Elegantly\Banhammer\Models\Ban;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User;
 
 /**
@@ -23,6 +24,11 @@ interface BannableContract
      * @return MorphMany<TBan, Model>
      */
     public function bans(): MorphMany;
+
+    /**
+     * @return MorphOne<TBan, Model>
+     */
+    public function latestBan(): MorphOne;
 
     /**
      * @param  null|array<array-key, mixed>  $metadata

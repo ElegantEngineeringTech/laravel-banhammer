@@ -9,6 +9,7 @@ use Elegantly\Banhammer\Models\Ban;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +35,14 @@ trait Bannable
     public function bans(): MorphMany
     {
         return $this->morphMany(static::getModelBan(), 'bannable');
+    }
+
+    /**
+     * @return MorphOne<TBan, $this>
+     */
+    public function latestBan(): MorphOne
+    {
+        return $this->morphOne(static::getModelBan(), 'bannable')->latestOfMany();
     }
 
     /**
