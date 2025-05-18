@@ -79,7 +79,7 @@ class Ban extends Model
         return $query->where(function ($query) {
             $query
                 ->where('ended_at', '=', null)
-                ->orWhere('ended_at', '<', now());
+                ->orWhere('ended_at', '>', now());
         });
 
     }
