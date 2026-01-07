@@ -60,17 +60,6 @@ trait Bannable
 
         $this->bans->each(fn ($ban) => $ban->end());
 
-        if ($user instanceof User) {
-            $userId = (int) $user->getKey();
-        } elseif ($user === true) {
-            $auth = Auth::user();
-            $userId = $auth ? ((int) $auth->getAuthIdentifier()) : null;
-        } elseif ($user === false) {
-            $userId = null;
-        } else {
-            $userId = $user;
-        }
-
         $model = static::getModelBan();
 
         $ban = new $model([
@@ -78,9 +67,16 @@ trait Bannable
             'reason' => $reason,
             'started_at' => $from ?? now(),
             'ended_at' => $until,
-            'user_id' => $userId,
             'metadata' => $metadata,
         ]);
+
+        if ($user === true) {
+            $ban->user()->associate(Auth::user());
+        } elseif ($user === false) {
+            $ban->user()->associate(null);
+        } else {
+            $ban->user()->associate($user);
+        }
 
         $this->bans()->save($ban);
 

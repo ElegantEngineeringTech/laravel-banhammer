@@ -65,7 +65,7 @@ class Ban extends Model
     /**
      * @return BelongsTo<TUser, $this>
      */
-    public function createdBy(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(static::getModelUser());
     }
