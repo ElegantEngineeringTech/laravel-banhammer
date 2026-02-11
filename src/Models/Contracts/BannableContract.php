@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Elegantly\Banhammer\Models\Contracts;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Elegantly\Banhammer\Models\Ban;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,7 +36,7 @@ interface BannableContract
      * @return TBan
      */
     public function ban(
-        int $level = 0,
+        BackedEnum|int $level = 0,
         ?string $reason = null,
         ?Carbon $from = null,
         ?Carbon $until = null,
@@ -43,7 +44,7 @@ interface BannableContract
         ?array $metadata = null
     ): Ban;
 
-    public function isBanned(?int $level = null): bool;
+    public function isBanned(null|BackedEnum|int $level = null): bool;
 
-    public function isNotBanned(?int $level = null): bool;
+    public function isNotBanned(null|BackedEnum|int $level = null): bool;
 }

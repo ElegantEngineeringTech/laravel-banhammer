@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Elegantly\Banhammer\Models\Concerns;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Elegantly\Banhammer\Models\Ban;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+
+use function Illuminate\Support\enum_value;
 
 /**
  * @template TBan of Ban
@@ -50,7 +53,7 @@ trait Bannable
      * @return TBan
      */
     public function ban(
-        int $level = 0,
+        BackedEnum|int $level = 0,
         ?string $reason = null,
         ?Carbon $from = null,
         ?Carbon $until = null,
@@ -63,7 +66,7 @@ trait Bannable
         $model = static::getModelBan();
 
         $ban = new $model([
-            'level' => $level,
+            'level' => (int) enum_value($level),
             'reason' => $reason,
             'started_at' => $from ?? now(),
             'ended_at' => $until,
@@ -101,33 +104,33 @@ trait Bannable
         return $this;
     }
 
-    public function isBanned(?int $level = null): bool
+    public function isBanned(null|BackedEnum|int $level = null): bool
     {
         if ($level) {
-            return $this->ban_level === $level;
+            return $this->ban_level === enum_value($level);
         }
 
         return $this->ban_level !== null;
     }
 
-    public function isNotBanned(?int $level = null): bool
+    public function isNotBanned(null|BackedEnum|int $level = null): bool
     {
-        return ! $this->isBanned($level);
+        return ! $this->isBanned(enum_value($level));
     }
 
-    public function scopeBanned(Builder $query, ?int $level = null): Builder
+    public function scopeBanned(Builder $query, null|BackedEnum|int $level = null): Builder
     {
         if ($level) {
-            return $query->where('ban_level', '=', $level);
+            return $query->where('ban_level', '=', enum_value($level));
         }
 
         return $query->where('ban_level', '!=', null);
     }
 
-    public function scopeNotBanned(Builder $query, ?int $level = null): Builder
+    public function scopeNotBanned(Builder $query, null|BackedEnum|int $level = null): Builder
     {
         if ($level) {
-            return $query->where('ban_level', '!=', $level);
+            return $query->where('ban_level', '!=', enum_value($level));
         }
 
         return $query->where('ban_level', '=', null);
