@@ -121,8 +121,12 @@ if ($user->isBanned()) {
     return response()->json(['error' => 'Your account is suspended.'], 403);
 }
 
+if ($user->isBanned(1)) { // $user->ban_level >= 1
+    // Restricted from specific high-level actions
+}
+
 // Check for a specific ban level
-if ($user->ban_level >= 1) {
+if ($user->ban_level === 1) {
     // Restricted from specific high-level actions
 }
 
