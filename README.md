@@ -1,83 +1,79 @@
-# This is my package laravel-banhammer
+# Laravel Banhammer
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/elegantly/laravel-banhammer.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-banhammer)
-[![Tests](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Code Style](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![PHPStan Level](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/phpstan.yml?label=phpstan&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3Aphpstan)
-[![Laravel Pint](https://img.shields.io/github/actions/workflow/status/ElegantEngineeringTech/laravel-banhammer/pint.yml?label=laravel%20pint&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-banhammer/actions?query=workflow%3Apint)
-[![Total Downloads](https://img.shields.io/packagist/dt/elegantly/laravel-banhammer.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-banhammer)
+**Laravel Banhammer** is a robust, flexible solution for managing model bans (Users, Teams, Organizations, etc.) with support for ban levels, expiration dates, and performance-optimized querying.
 
-A simple package to ban an model (users, teams...).
+## Key Features
+
+- **Polymorphic:** Ban any Eloquent model.
+- **Time-aware:** Support for permanent or temporary bans.
+- **Tiered Restrictions:** Use "levels" to define the severity of the ban.
+- **Performance First:** Includes a denormalization command to keep your queries fast.
+
+---
 
 ## Installation
 
-You can install the package via composer:
+Install the package via composer:
 
 ```bash
 composer require elegantly/laravel-banhammer
+
 ```
 
-First, publish the config with:
+### 1. Configure Your Models
+
+Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag="banhammer-config"
+
 ```
 
-Then define the bannable models in the config file like this:
+In `config/banhammer.php`, list the models that can be banned:
 
 ```php
-use Elegantly\Banhammer\Models\Ban;
-use Illuminate\Foundation\Auth\User;
-
 return [
-
-    'model_ban' => Ban::class,
-
-    'model_user' => User::class,
+    'model_ban' => Elegantly\Banhammer\Models\Ban::class,
 
     'bannables' => [
         \App\Models\User::class,
-        // \App\Models\Team::class
+        \App\Models\Team::class,
     ],
-
 ];
 
 ```
 
-Next, publish and run the migrations with:
+### 2. Migrations
+
+Publish and run the migrations:
 
 ```bash
 php artisan vendor:publish --tag="banhammer-migrations"
 php artisan migrate
+
 ```
 
-Finally schedule the command from `bootstrap/app.php` with:
+### 3. Schedule the Denormalizer
 
-```php
-use Illuminate\Foundation\Application;
-use Illuminate\Console\Scheduling\Schedule;
-use Elegantly\Banhammer\Commands\DenormalizeBannableCommand;
+This package uses a denormalization strategy to ensure checking a user's ban status doesn't require a heavy database join every time.
 
-return Application::configure(basePath: dirname(__DIR__))
-    // ...
-    ->withSchedule(function (Schedule $schedule) {
-        $schedule->command(DenormalizeBannableCommand::class)->everyMinute();
-    })
-    ->create();
-```
-
-Or from `routes/console.php` with:
+Add the command to your `routes/console.php`:
 
 ```php
 use Illuminate\Support\Facades\Schedule;
 use Elegantly\Banhammer\Commands\DenormalizeBannableCommand;
 
+// This updates the 'is_banned' status on your models based on ban expiration dates
 Schedule::command(DenormalizeBannableCommand::class)->everyMinute();
 ```
 
+---
+
 ## Usage
 
-### Prepare your models:
+### Preparing the Model
+
+Implement the `BannableContract` and use the `Bannable` trait in any model you wish to restrict:
 
 ```php
 namespace App\Models;
@@ -90,39 +86,69 @@ class User extends Authenticatable implements BannableContract
 {
     use Bannable;
 }
+
 ```
 
+### Banning a Model
+
+You can specify the severity (level), the reason, and the duration.
+
 ```php
+$user = User::find(1);
+
+// Ban indefinitely
 $user->ban(
     level: 0,
-    reason: "spam",
-    from: now(),
-    until: null,
+    reason: "Repeated spamming",
 );
+
+// Ban until a specific date (Temporary)
+$user->ban(
+    level: 1,
+    reason: "Cooling off period",
+    until: now()->addDays(7)
+);
+
 ```
+
+### Checking Ban Status
+
+The package provides helpful methods to check if a model is currently restricted.
+
+```php
+// Check if currently banned
+if ($user->isBanned()) {
+    return response()->json(['error' => 'Your account is suspended.'], 403);
+}
+
+// Check for a specific ban level
+if ($user->ban_level >= 1) {
+    // Restricted from specific high-level actions
+}
+
+```
+
+### Unbanning
+
+To lift all bans from a model:
+
+```php
+$user->unban();
+
+```
+
+---
 
 ## Testing
 
 ```bash
 composer test
+
 ```
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
--   [Quentin Gabriele](https://github.com/QuentinGab)
--   [All Contributors](../../contributors)
+Please see [CONTRIBUTING](https://www.google.com/search?q=CONTRIBUTING.md) for details.
 
 ## License
 
