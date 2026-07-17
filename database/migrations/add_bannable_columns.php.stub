@@ -45,6 +45,7 @@ return new class extends Migration
                 $model->getTable(),
                 function (Blueprint $table) {
 
+                    $table->dropIndex(['ban_level']);
                     $table->dropColumn('ban_level');
 
                 }
