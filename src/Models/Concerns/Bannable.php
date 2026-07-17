@@ -107,7 +107,7 @@ trait Bannable
     public function isBanned(null|BackedEnum|int $level = null): bool
     {
         if ($level) {
-            return $this->ban_level >= enum_value($level);
+            return enum_value($this->ban_level) >= enum_value($level);
         }
 
         return $this->ban_level !== null;
@@ -115,7 +115,7 @@ trait Bannable
 
     public function isNotBanned(null|BackedEnum|int $level = null): bool
     {
-        return ! $this->isBanned(enum_value($level));
+        return ! $this->isBanned($level);
     }
 
     public function scopeBanned(Builder $query, null|BackedEnum|int $level = null): Builder
